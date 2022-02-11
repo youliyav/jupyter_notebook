@@ -1,0 +1,102 @@
+(base) user@user-G46VW:~$ cd PycharmProjects/
+(base) user@user-G46VW:~/PycharmProjects$ cd Harvard_Python_Js/
+(base) user@user-G46VW:~/PycharmProjects/Harvard_Python_Js$ cd SQL/
+    
+(base) user@user-G46VW:~/PycharmProjects/Harvard_Python_Js/SQL$ sqlite3 flights.sql
+SQLite version 3.33.0 2020-08-14 13:23:32
+Enter ".help" for usage hints.
+
+sqlite> .mode columns  # делает красивый вывод колонок
+sqlite> .headers yes  # показывает заголовки
+
+
+# общий вывод таблицы flights
+sqlite> SELECT * FROM flights;
+id  origin    destination  duration
+--  --------  -----------  --------
+1   New York  London       415     
+2   Shanghai  Paris        760     
+3   Istanbul  Tokio        700     
+4   New York  Paris        435     
+5   Moscow    Paris        245     
+6   Lima      New York     455 
+
+
+# WHERE - условие с выводом строк, где отбытие из New York
+sqlite> SELECT * FROM flights WHERE origin = 'New York';
+id  origin    destination  duration
+--  --------  -----------  --------
+1   New York  London       415     
+4   New York  Paris        435  
+
+
+# WHERE - условие с выводом строк, где длительность > 500
+sqlite> SELECT * FROM flights WHERE duration > 500;
+id  origin    destination  duration
+--  --------  -----------  --------
+2   Shanghai  Paris        760     
+3   Istanbul  Tokio        700    
+
+
+# WHERE - условие с выводом строк, где длительность > 500 AND прибытие в Paris
+sqlite> SELECT * FROM flights WHERE duration > 500 AND destination = 'Paris';
+id  origin    destination  duration
+--  --------  -----------  --------
+2   Shanghai  Paris        760  
+
+
+# WHERE - условие с выводом строк, где длительность > 500 OR прибытие в Paris
+sqlite> SELECT * FROM flights WHERE duration > 500 OR destination = 'Paris';
+id  origin    destination  duration
+--  --------  -----------  --------
+2   Shanghai  Paris        760     
+3   Istanbul  Tokio        700     
+4   New York  Paris        435     
+5   Moscow    Paris        245    
+
+
+# SELECT - условие с выводом строк, где отбытия идут из New York и Lima
+sqlite> SELECT * FROM flights WHERE origin IN ('New York', 'Lima');
+id  origin    destination  duration
+--  --------  -----------  --------
+1   New York  London       415     
+4   New York  Paris        435     
+6   Lima      New York     455  
+
+
+# SELECT - условие с выводом строк, где в названии стран отбытия есть буква "а" 
+#(% указывает на любое количество букв и цифр)
+sqlite> SELECT * FROM flights WHERE origin LIKE '%a%';
+
+id  origin    destination  duration
+--  --------  -----------  --------
+2   Shanghai  Paris        760     
+3   Istanbul  Tokio        700     
+6   Lima      New York     455   
+
+
+# UPDATE - обновляет данные в таблице. SET - устанавливает новое значение, с условиями WHERE и AND
+sqlite> UPDATE flights
+   ...> SET duration = 430
+   ...> WHERE origin = 'New York'
+   ...> AND destination = 'London';
+    
+# было до UPDATE
+1   New York  London       415 
+
+# стало после UPDATE
+1   New York  London       430       
+
+
+# DELETE - удаляет из таблицы данные, где прибытие 'Tokio'
+sqlite> DELETE FROM flights WHERE destination = 'Tokio';
+
+id  origin    destination  duration
+--  --------  -----------  --------
+1   New York  London       430     
+2   Shanghai  Paris        760     
+# ------ было удалено 'Tokio' ------
+4   New York  Paris        435     
+5   Moscow    Paris        245     
+6   Lima      New York     455     
+ 
